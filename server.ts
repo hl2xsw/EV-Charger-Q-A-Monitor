@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import { ScrapedQuestion, KeywordTrend, SchedulerConfig, SecurityLog, AnomalyRule, SystemAlert, PortalType } from "./src/types.js";
@@ -894,13 +893,29 @@ app.get("/api/reports/detailed", (req, res) => {
 
 // Vite Middleware & Static Assets Routing
 async function startServer() {
+  const isProductionMode = 
+    process.env.NODE_ENV === "production" || 
+    (typeof __filename !== "undefined" && (__filename.includes("server.cjs") || __filename.includes("dist"))) || 
+    !process.env.npm_lifecycle_event?.includes("dev");
+
   let vite: any;
-  if (process.env.NODE_ENV !== "production") {
-    vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
+  if (!isProductionMode) {
+    try {
+      const { createServer: createViteServer } = await import("vite");
+      vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } catch (e) {
+      console.error("Failed to load Vite dev server middleware, falling back to static serving:", e);
+      // Fallback
+      const distPath = path.join(process.cwd(), "dist");
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    }
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
@@ -910,10 +925,10 @@ async function startServer() {
   }
 
   const server = app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT} (isProductionMode: ${isProductionMode})`);
   });
 
-  if (process.env.NODE_ENV !== "production" && vite) {
+  if (!isProductionMode && vite) {
     server.on("upgrade", (req, socket, head) => {
       vite.ws.handleUpgrade(req, socket, head);
     });
