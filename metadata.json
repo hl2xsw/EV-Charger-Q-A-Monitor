@@ -1,0 +1,6 @@
+{
+  "name": "EV Charger Q&A Monitor",
+  "description": "실시간 전기차 충전기 Q&A 수집 모니터링, AI 답변 및 홍보 자동화, 이상 징후 감지 및 권한 관리 대시보드",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
