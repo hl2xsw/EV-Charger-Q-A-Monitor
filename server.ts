@@ -894,8 +894,9 @@ app.get("/api/reports/detailed", (req, res) => {
 
 // Vite Middleware & Static Assets Routing
 async function startServer() {
+  let vite: any;
   if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
+    vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
@@ -908,9 +909,15 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
   });
+
+  if (process.env.NODE_ENV !== "production" && vite) {
+    server.on("upgrade", (req, socket, head) => {
+      vite.ws.handleUpgrade(req, socket, head);
+    });
+  }
 }
 
 startServer();
