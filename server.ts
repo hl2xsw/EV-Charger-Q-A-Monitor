@@ -154,7 +154,7 @@ let keywordTrends: KeywordTrend[] = [
 
 let schedulerConfig: SchedulerConfig = {
   isRunning: true,
-  intervalMinutes: 15,
+  intervalMinutes: 10,
   lastRun: new Date(Date.now() - 600000).toISOString(),
   nextRun: new Date(Date.now() + 300000).toISOString(),
   targetKws: ["전기차 충전기", "충전기 고장", "충전기 화재", "아파트 충전기", "완속충전기 추천"]

@@ -4,6 +4,62 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Google AI Studio App</title>
+    <script>
+      // Silence benign HMR / WebSocket sandbox connection messages and prevent unhandled rejections
+      (function() {
+        const isBenignNoise = (str) => {
+          if (!str) return false;
+          const s = String(str).toLowerCase();
+          return s.includes("websocket") || 
+                 s.includes("failed to connect") || 
+                 s.includes("failed to fetch") || 
+                 s.includes("hmr") || 
+                 s.includes("vite") || 
+                 s.includes("closed without opened") ||
+                 s.includes("networkerror") ||
+                 s.includes("load failed");
+        };
+
+        window.addEventListener("unhandledrejection", function(event) {
+          const reason = event.reason;
+          if (!reason) return;
+          const reasonStr = reason.stack || reason.message || String(reason);
+          if (isBenignNoise(reasonStr)) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.warn("[Sanitized Suppressed Rejection]:", reasonStr);
+          }
+        }, true);
+
+        window.addEventListener("error", function(event) {
+          const errorMsg = event.message || "";
+          const errorStack = event.error ? (event.error.stack || event.error.message || "") : "";
+          if (isBenignNoise(errorMsg) || isBenignNoise(errorStack)) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.warn("[Sanitized Suppressed Error]:", errorMsg);
+          }
+        }, true);
+
+        // Monkeypatch WebSocket to suppress internal connection error logs
+        const OriginalWebSocket = window.WebSocket;
+        if (OriginalWebSocket) {
+          class PatchedWebSocket extends OriginalWebSocket {
+            constructor(url, protocols) {
+              super(url, protocols);
+              this.addEventListener("error", (e) => {
+                const urlStr = String(url || "");
+                if (isBenignNoise(urlStr)) {
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                }
+              }, true);
+            }
+          }
+          window.WebSocket = PatchedWebSocket;
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

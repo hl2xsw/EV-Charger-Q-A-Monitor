@@ -85,9 +85,9 @@ const FALLBACK_KEYWORDS: KeywordTrend[] = [
 
 const FALLBACK_SCHEDULER: SchedulerConfig = {
   isRunning: true,
-  intervalMinutes: 15,
+  intervalMinutes: 10,
   lastRun: new Date().toISOString(),
-  nextRun: new Date(Date.now() + 900000).toISOString(),
+  nextRun: new Date(Date.now() + 600000).toISOString(),
   targetKws: ["전기차 충전기", "충전기 고장", "충전기 화재", "아파트 충전기", "완속충전기 추천"]
 };
 
