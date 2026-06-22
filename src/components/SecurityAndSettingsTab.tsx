@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { SecurityLog, AnomalyRule, ScrapedQuestion } from '../types';
-import { Shield, Lock, FileText, Download, ToggleLeft, ToggleRight, Plus, Eye, AlertOctagon, Printer, Activity } from 'lucide-react';
+import { SecurityLog, AnomalyRule, ScrapedQuestion, PortalItem } from '../types';
+import { Shield, Lock, FileText, Download, ToggleLeft, ToggleRight, Plus, Eye, AlertOctagon, Printer, Activity, Trash2 } from 'lucide-react';
 
 interface SecurityAndSettingsTabProps {
   logs: SecurityLog[];
@@ -11,6 +11,9 @@ interface SecurityAndSettingsTabProps {
   onAddRule: (rule: Partial<AnomalyRule>) => Promise<any>;
   onToggleRule: (id: string) => Promise<any>;
   onAddLog: (action: string, details: string) => void;
+  portals: PortalItem[];
+  onAddPortal: (portal: Partial<PortalItem>) => Promise<any>;
+  onDeletePortal: (id: string) => Promise<any>;
 }
 
 export const SecurityAndSettingsTab: React.FC<SecurityAndSettingsTabProps> = ({
@@ -21,7 +24,10 @@ export const SecurityAndSettingsTab: React.FC<SecurityAndSettingsTabProps> = ({
   onChangeRole,
   onAddRule,
   onToggleRule,
-  onAddLog
+  onAddLog,
+  portals,
+  onAddPortal,
+  onDeletePortal
 }) => {
   // New rule state
   const [newKeyword, setNewKeyword] = useState('');
@@ -31,6 +37,38 @@ export const SecurityAndSettingsTab: React.FC<SecurityAndSettingsTabProps> = ({
   // Report generator state
   const [reportData, setReportData] = useState<any | null>(null);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+
+  // New Portal form states
+  const [isAddingPortal, setIsAddingPortal] = useState(false);
+  const [portalFormId, setPortalFormId] = useState('');
+  const [portalFormName, setPortalFormName] = useState('');
+  const [portalFormBadge, setPortalFormBadge] = useState('');
+  const [portalFormColor, setPortalFormColor] = useState('bg-emerald-50 text-emerald-700 border-emerald-200');
+
+  const resetPortalForm = () => {
+    setPortalFormId('');
+    setPortalFormName('');
+    setPortalFormBadge('');
+    setPortalFormColor('bg-emerald-50 text-emerald-700 border-emerald-200');
+  };
+
+  const handleAddPortalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!portalFormId || !portalFormName || !portalFormBadge || userRole === 'viewer') return;
+
+    try {
+      await onAddPortal({
+        id: portalFormId.trim(),
+        name: portalFormName.trim(),
+        badge: `${portalFormBadge.trim()} ${portalFormName.trim()}`,
+        color: portalFormColor
+      });
+      setIsAddingPortal(false);
+      resetPortalForm();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleCreateRule = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,6 +235,136 @@ export const SecurityAndSettingsTab: React.FC<SecurityAndSettingsTabProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* 1.5 Scraping Channel Portal Management Card */}
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs space-y-4">
+          <div className="pb-2 border-b border-gray-100">
+            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+              <Activity className="h-4.5 w-4.5 text-indigo-500" />
+              질문 수집 포털 설정 (설정 및 채널 제어)
+            </h3>
+            <p className="text-[10px] text-gray-400 mt-0.5">실시간 크롤러가 실제 지식 탐색을 수행할 포털 검색 채널 리스트</p>
+          </div>
+
+          {/* Portal List */}
+          <div className="space-y-2 max-h-[220px] overflow-y-auto pr-0.5">
+            {portals.map(p => (
+              <div key={p.id} className="flex justify-between items-center p-2.5 rounded-xl border border-slate-100 bg-slate-50/30 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${p.color || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                    {p.badge}
+                  </span>
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-slate-850 block">{p.name}</span>
+                    <span className="block text-[8px] font-mono text-slate-400">ID: {p.id}</span>
+                  </div>
+                </div>
+                {userRole !== 'viewer' && (
+                  <button
+                    onClick={() => onDeletePortal(p.id)}
+                    disabled={portals.length <= 1}
+                    className="p-1 hover:bg-rose-50 text-slate-300 hover:text-rose-500 rounded-md transition-colors disabled:opacity-40"
+                    title={portals.length <= 1 ? "최소 1개의 포털이 필요합니다." : "포털 삭제"}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Add Portal Inline Button / Form */}
+          {userRole !== 'viewer' && (
+            <div className="pt-2">
+              {!isAddingPortal ? (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingPortal(true)}
+                  className="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  새로운 수집 포털 채널 추가
+                </button>
+              ) : (
+                <form onSubmit={handleAddPortalSubmit} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                  <h4 className="text-[11px] font-bold text-indigo-800">새 포털 수집 저장</h4>
+                  
+                  <div className="space-y-1">
+                    <label className="block text-[9px] font-bold text-slate-500">포털 매체 식별 ID (영글, 숫자, 언더바) *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="예: ruliweb, clien_ev"
+                      value={portalFormId}
+                      onChange={e => setPortalFormId(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                      className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white text-slate-800 focus:outline-indigo-500 font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[9px] font-bold text-slate-500">포털 채널 한글 타이틀 *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="예: 루리웹, 클리앙 EV소식"
+                      value={portalFormName}
+                      onChange={e => setPortalFormName(e.target.value)}
+                      className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white text-slate-800 focus:outline-indigo-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="block text-[9px] font-bold text-slate-500">채널 이모지 배지 *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="예: 💬, ☕, ⚡, 🟢"
+                        value={portalFormBadge}
+                        onChange={e => setPortalFormBadge(e.target.value)}
+                        className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white text-slate-800 text-center focus:outline-indigo-500"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[9px] font-bold text-slate-500">스킨 테마 색상 *</label>
+                      <select
+                        value={portalFormColor}
+                        onChange={e => setPortalFormColor(e.target.value)}
+                        className="w-full p-1.5 border border-slate-200 rounded text-xs bg-white text-slate-800 focus:outline-indigo-500"
+                      >
+                        <option value="bg-emerald-50 text-emerald-700 border-emerald-250">초록 (Emerald)</option>
+                        <option value="bg-violet-50 text-violet-700 border-violet-200">보라 (Violet)</option>
+                        <option value="bg-blue-50 text-blue-700 border-blue-200">파랑 (Blue)</option>
+                        <option value="bg-orange-50 text-orange-700 border-orange-200">주황 (Orange)</option>
+                        <option value="bg-rose-50 text-rose-700 border-rose-250">빨강 (Rose)</option>
+                        <option value="bg-gray-50 text-gray-700 border-gray-200">회색 (Gray)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-1.5 pt-1 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingPortal(false);
+                        resetPortalForm();
+                      }}
+                      className="flex-1 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded transition-all font-bold"
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-all font-bold"
+                    >
+                      실시간 저장
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          )}
         </div>
 
       </div>

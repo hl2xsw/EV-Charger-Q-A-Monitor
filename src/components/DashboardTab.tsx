@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrapedQuestion, KeywordTrend, SystemAlert } from '../types';
+import { ScrapedQuestion, KeywordTrend, SystemAlert, PortalItem } from '../types';
 import { PORTAL_MAP, CATEGORY_COLORS } from '../lib/constants';
 import { Shield, Sparkles, AlertTriangle, RefreshCw, Layers, TrendingUp, Calendar, ExternalLink } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface DashboardTabProps {
   schedulerInterval?: number;
   onRefresh: () => void;
   onSelectQuestion: (id: string) => void;
+  portals?: PortalItem[];
 }
 
 export const DashboardTab: React.FC<DashboardTabProps> = ({
@@ -20,7 +21,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
   schedulerActive,
   schedulerInterval = 10,
   onRefresh,
-  onSelectQuestion
+  onSelectQuestion,
+  portals
 }) => {
   // Aggregate Stats
   const totalCount = questions.length;
@@ -148,26 +150,28 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
             포털별 수집 질문 분포 
           </h3>
           <div className="space-y-3.5">
-            {Object.keys(PORTAL_MAP).map(key => {
-              const count = portalCounts[key] || 0;
+            {(portals && portals.length > 0 
+              ? portals 
+              : Object.keys(PORTAL_MAP).map(k => ({ id: k, name: PORTAL_MAP[k as keyof typeof PORTAL_MAP]?.name || k, badge: PORTAL_MAP[k as keyof typeof PORTAL_MAP]?.badge || k, color: PORTAL_MAP[k as keyof typeof PORTAL_MAP]?.color }))
+            ).map(p => {
+              const count = portalCounts[p.id] || 0;
               const maxVal = Math.max(...Object.values(portalCounts), 1);
               const percentage = Math.round((count / (totalCount || 1)) * 100);
-              const info = PORTAL_MAP[key as keyof typeof PORTAL_MAP];
               
               return (
-                <div key={key} className="space-y-1">
+                <div key={p.id} className="space-y-1">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-semibold text-gray-700 flex items-center gap-1">
-                      {info?.badge}
+                      {p.badge}
                     </span>
                     <span className="font-mono text-gray-500">{count}건 ({percentage}%)</span>
                   </div>
                   <div className="w-full bg-slate-50 h-2.5 rounded-full overflow-hidden border border-gray-150">
                     <div 
                       className={`h-full rounded-full transition-all duration-500 ${
-                        key.includes('naver') ? 'bg-emerald-500' :
-                        key.includes('daum') ? 'bg-blue-500' :
-                        key.includes('dcinside') ? 'bg-gray-600' : 'bg-indigo-500'
+                        p.id.includes('naver') ? 'bg-emerald-500' :
+                        p.id.includes('daum') ? 'bg-blue-500' :
+                        p.id.includes('dcinside') ? 'bg-gray-600' : 'bg-indigo-500'
                       }`}
                       style={{ width: `${Math.round((count / maxVal) * 100)}%` }}
                     ></div>

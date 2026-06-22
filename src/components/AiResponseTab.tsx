@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrapedQuestion } from '../types';
+import { ScrapedQuestion, PortalItem } from '../types';
 import { PORTAL_MAP } from '../lib/constants';
 import { Sparkles, MessageSquare, Tag, Copy, Upload, ArrowRight, CornerDownRight, CheckCircle } from 'lucide-react';
 
@@ -9,6 +9,7 @@ interface AiResponseTabProps {
   onSelectQuestionId: (id: string | null) => void;
   onGenerateAiResponse: (id: string, tone: 'friendly' | 'expert' | 'direct_pr', brand: string, coreMsg: string) => Promise<any>;
   onMarkPosted: (id: string, text: string) => Promise<any>;
+  portals?: PortalItem[];
 }
 
 export const AiResponseTab: React.FC<AiResponseTabProps> = ({
@@ -16,7 +17,8 @@ export const AiResponseTab: React.FC<AiResponseTabProps> = ({
   selectedQuestionId,
   onSelectQuestionId,
   onGenerateAiResponse,
-  onMarkPosted
+  onMarkPosted,
+  portals
 }) => {
   const selectedQuestion = questions.find(q => q.id === selectedQuestionId);
 
@@ -80,7 +82,7 @@ export const AiResponseTab: React.FC<AiResponseTabProps> = ({
         <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
           {questions.map(q => {
             const isSelected = q.id === selectedQuestionId;
-            const pInfo = PORTAL_MAP[q.portal];
+            const pInfo = portals?.find(p => p.id === q.portal) || PORTAL_MAP[q.portal];
             return (
               <div
                 key={q.id}
@@ -97,7 +99,7 @@ export const AiResponseTab: React.FC<AiResponseTabProps> = ({
                 }`}
               >
                 <div className="flex justify-between items-center mb-1">
-                  <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold border ${pInfo?.color}`}>
+                  <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold border ${pInfo?.color || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
                     {pInfo?.name || q.portal}
                   </span>
                   <span className="text-[10px] text-slate-400 font-mono">
@@ -132,9 +134,14 @@ export const AiResponseTab: React.FC<AiResponseTabProps> = ({
             <div className="p-4 bg-slate-50 rounded-2xl relative border border-slate-100">
               <span className="absolute top-3 right-3 text-[10px] text-gray-400 font-mono">작성자: {selectedQuestion.author}</span>
               <div className="flex items-center gap-2 mb-2">
-                <span className={`px-2 py-0.5 text-[10px] font-black rounded border ${PORTAL_MAP[selectedQuestion.portal]?.color}`}>
-                  {PORTAL_MAP[selectedQuestion.portal]?.name}
-                </span>
+                {(() => {
+                  const pSelInfo = portals?.find(p => p.id === selectedQuestion.portal) || PORTAL_MAP[selectedQuestion.portal];
+                  return (
+                    <span className={`px-2 py-0.5 text-[10px] font-black rounded border ${pSelInfo?.color || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                      {pSelInfo?.name || selectedQuestion.portal}
+                    </span>
+                  );
+                })()}
                 <span className="text-xs text-indigo-600 font-bold">{selectedQuestion.category}</span>
               </div>
               <h2 className="text-sm font-bold text-slate-800">{selectedQuestion.title}</h2>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ScrapedQuestion, KeywordTrend, SchedulerConfig, SecurityLog, AnomalyRule, SystemAlert } from './types';
+import { ScrapedQuestion, KeywordTrend, SchedulerConfig, SecurityLog, AnomalyRule, SystemAlert, PortalItem } from './types';
 import { DashboardTab } from './components/DashboardTab';
 import { ScraperTab } from './components/ScraperTab';
 import { AiResponseTab } from './components/AiResponseTab';
@@ -119,6 +119,17 @@ const FALLBACK_ALERTS: SystemAlert[] = [
   }
 ];
 
+const FALLBACK_PORTALS: PortalItem[] = [
+  { id: "naver_jisinin", name: "네이버 지식iN", badge: "🟢 지식iN", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  { id: "daum_tip", name: "다음 팁 (TIP)", badge: "🔵 다음팁", color: "bg-blue-50 text-blue-700 border-blue-200" },
+  { id: "naver_cafe", name: "네이버 카페", badge: "☕ 네이버카페", color: "bg-green-50 text-green-700 border-green-200" },
+  { id: "daum_cafe", name: "다음 카페", badge: "☕ 다음카페", color: "bg-sky-50 text-sky-700 border-sky-200" },
+  { id: "dcinside", name: "디시인사이드", badge: "💬 디시", color: "bg-gray-50 text-gray-700 border-gray-200" },
+  { id: "fmkorea", name: "에펨코리아", badge: "⚽ 펨코", color: "bg-violet-50 text-violet-700 border-violet-200" },
+  { id: "inven", name: "인벤", badge: "🎮 인벤", color: "bg-teal-50 text-teal-700 border-teal-200" },
+  { id: "bobae_dream", name: "보배드림", badge: "🚗 보배", color: "bg-slate-100 text-slate-800 border-slate-300" }
+];
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'scraper' | 'ai-response' | 'security'>('dashboard');
   const [userRole, setUserRole] = useState<'admin' | 'manager' | 'viewer'>('admin');
@@ -130,6 +141,7 @@ export default function App() {
   const [logs, setLogs] = useState<SecurityLog[]>(FALLBACK_LOGS);
   const [rules, setRules] = useState<AnomalyRule[]>(FALLBACK_RULES);
   const [alerts, setAlerts] = useState<SystemAlert[]>(FALLBACK_ALERTS);
+  const [portals, setPortals] = useState<PortalItem[]>(FALLBACK_PORTALS);
 
   // Selection states
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
@@ -147,13 +159,14 @@ export default function App() {
         console.log('[Realtime Scraper] Client requested manual real-time crawl trigger.');
         await fetch('/api/scraper/trigger', { method: 'POST' }).catch(() => null);
       }
-      const [questionsRes, keywordsRes, schedulerRes, logsRes, rulesRes, alertsRes] = await Promise.all([
+      const [questionsRes, keywordsRes, schedulerRes, logsRes, rulesRes, alertsRes, portalsRes] = await Promise.all([
         fetch('/api/questions').catch(() => null),
         fetch('/api/keywords').catch(() => null),
         fetch('/api/scheduler').catch(() => null),
         fetch('/api/logs').catch(() => null),
         fetch('/api/anomalies/rules').catch(() => null),
-        fetch('/api/alerts').catch(() => null)
+        fetch('/api/alerts').catch(() => null),
+        fetch('/api/portals').catch(() => null)
       ]);
 
       if (
@@ -194,6 +207,12 @@ export default function App() {
       }
       if (Array.isArray(alertsData) && alertsData.length > 0) {
         setAlerts(alertsData);
+      }
+      if (portalsRes && portalsRes.ok) {
+        const portalsData = await portalsRes.json();
+        if (Array.isArray(portalsData) && portalsData.length > 0) {
+          setPortals(portalsData);
+        }
       }
     } catch (e: any) {
       console.warn('API network fetching returned benign exception, working seamlessly on fallback simulation preset:', e.message);
@@ -239,6 +258,47 @@ export default function App() {
       setLogs(prev => [newLog, ...prev]);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  // Dynamic settings handler for adding a portal
+  const handleAddPortal = async (portalData: Partial<PortalItem>) => {
+    if (userRole === 'viewer') {
+      alert('일반 뷰어 권한으로는 수집 채널을 추가할 수 없습니다.');
+      return;
+    }
+    const res = await fetch('/api/portals', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(portalData)
+    });
+    if (res.ok) {
+      const item = await res.json();
+      setPortals(prev => [...prev, item]);
+      addSecurityAuditLog('수집 채널 포털 등록', `새 포털 채널 ID ${item.id} (${item.name}) 신규 지정`);
+      return item;
+    } else {
+      const err = await res.json();
+      alert(err.error || '포털 채널 등록에 실패했습니다.');
+      throw new Error(err.error || 'Failed to add portal');
+    }
+  };
+
+  // Dynamic settings handler for deleting a portal
+  const handleDeletePortal = async (id: string) => {
+    if (userRole === 'viewer') {
+      alert('일반 뷰어 권한으로는 수집 채널을 삭제할 수 없습니다.');
+      return;
+    }
+    const res = await fetch(`/api/portals/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setPortals(prev => prev.filter(p => p.id !== id));
+      addSecurityAuditLog('수집 채널 포털 삭제', `포털 채널 ID ${id} 영구 제거`);
+      return true;
+    } else {
+      const err = await res.json();
+      alert(err.error || '포털 채널 삭제에 실패했습니다.');
+      return false;
     }
   };
 
@@ -511,6 +571,7 @@ export default function App() {
               schedulerInterval={scheduler.intervalMinutes}
               onRefresh={() => fetchAllStates(true)}
               onSelectQuestion={handleSelectQuestion}
+              portals={portals}
             />
           )}
 
@@ -525,6 +586,7 @@ export default function App() {
               onTriggerScrapeNow={handleTriggerScrapeNow}
               onSelectQuestion={handleSelectQuestion}
               onClassifyAi={handleClassifyAi}
+              portals={portals}
             />
           )}
 
@@ -535,6 +597,7 @@ export default function App() {
               onSelectQuestionId={setSelectedQuestionId}
               onGenerateAiResponse={handleGenerateAiResponse}
               onMarkPosted={handleMarkPosted}
+              portals={portals}
             />
           )}
 
@@ -548,6 +611,9 @@ export default function App() {
               onAddRule={handleAddRule}
               onToggleRule={handleToggleRule}
               onAddLog={addSecurityAuditLog}
+              portals={portals}
+              onAddPortal={handleAddPortal}
+              onDeletePortal={handleDeletePortal}
             />
           )}
         </div>
@@ -558,7 +624,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4">
           <p className="font-bold text-slate-500">VoltCharge Pro 실시간 Q&A 관제 모니터링 시스템</p>
           <div className="flex gap-2 justify-center mt-2 text-[10px] text-gray-400 font-mono">
-            <span>• 포털 감시 매체수: 8개 (디시인사이드, FM코리아, 보배드림 등 완비)</span>
+            <span>• 포털 감시 매체수: {portals.length}개 ({portals.slice(0, 3).map(p => p.name).join(', ')} 등 완비)</span>
             <span>• 인공지능 분류 시스템: Gemini 3.5 AI Core 연동</span>
             <span>• 실시간 접속 IP 감시: 작동중 (~192.168.*)</span>
           </div>

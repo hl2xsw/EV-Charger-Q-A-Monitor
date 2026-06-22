@@ -1,12 +1,4 @@
-export type PortalType =
-  | 'naver_jisinin'
-  | 'daum_tip'
-  | 'naver_cafe'
-  | 'daum_cafe'
-  | 'dcinside'
-  | 'fmkorea'
-  | 'inven'
-  | 'bobae_dream';
+export type PortalType = string; // can be 'naver_jisinin' | 'daum_tip' | 'naver_cafe' | 'daum_cafe' | 'dcinside' | 'fmkorea' | 'inven' | 'bobae_dream' | or any custom added portal ID
 
 export interface ScrapedQuestion {
   id: string;
@@ -67,4 +59,11 @@ export interface SystemAlert {
   message: string;
   isRead: boolean;
   relatedQuestionId?: string;
+}
+
+export interface PortalItem {
+  id: string;
+  name: string;
+  badge: string;
+  color: string;
 }

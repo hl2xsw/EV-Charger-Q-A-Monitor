@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrapedQuestion, SchedulerConfig, PortalType } from '../types';
+import React, { useState, useEffect } from 'react';
+import { ScrapedQuestion, SchedulerConfig, PortalType, PortalItem } from '../types';
 import { PORTAL_MAP, CATEGORY_COLORS } from '../lib/constants';
 import { Search, SlidersHorizontal, Calendar, Plus, Play, Pause, Save, Trash2, ShieldAlert, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
 
@@ -13,6 +13,7 @@ interface ScraperTabProps {
   onTriggerScrapeNow: () => void;
   onSelectQuestion: (id: string) => void;
   onClassifyAi: (id: string) => Promise<any>;
+  portals?: PortalItem[];
 }
 
 export const ScraperTab: React.FC<ScraperTabProps> = ({
@@ -24,7 +25,8 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
   onUpdateScheduler,
   onTriggerScrapeNow,
   onSelectQuestion,
-  onClassifyAi
+  onClassifyAi,
+  portals
 }) => {
   // Local state for filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,7 +38,13 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
   const [showManualForm, setShowManualForm] = useState(false);
   const [manualTitle, setManualTitle] = useState('');
   const [manualContent, setManualContent] = useState('');
-  const [manualPortal, setManualPortal] = useState<PortalType>('naver_jisinin');
+  const [manualPortal, setManualPortal] = useState<string>('naver_jisinin');
+
+  useEffect(() => {
+    if (portals && portals.length > 0 && manualPortal === 'naver_jisinin' && !portals.some(p => p.id === 'naver_jisinin')) {
+      setManualPortal(portals[0].id);
+    }
+  }, [portals]);
   const [manualAuthor, setManualAuthor] = useState('');
   const [manualUrl, setManualUrl] = useState('');
   const [manualCategory, setManualCategory] = useState<any>('설치 문의');
@@ -320,8 +328,11 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
                 className="w-full text-xs p-1.5 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none"
               >
                 <option value="">전체 매체</option>
-                {Object.entries(PORTAL_MAP).map(([key, value]) => (
-                  <option key={key} value={key}>{value.name}</option>
+                {(portals && portals.length > 0
+                  ? portals
+                  : Object.keys(PORTAL_MAP).map(k => ({ id: k, name: PORTAL_MAP[k as keyof typeof PORTAL_MAP]?.name || k }))
+                ).map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
             </div>
@@ -361,11 +372,14 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
                 <label className="block text-[10px] font-semibold text-gray-500 mb-1">채널 포털 명 *</label>
                 <select
                   value={manualPortal}
-                  onChange={e => setManualPortal(e.target.value as PortalType)}
+                  onChange={e => setManualPortal(e.target.value)}
                   className="w-full text-xs p-2 border border-gray-200 rounded bg-white focus:outline-none"
                 >
-                  {Object.entries(PORTAL_MAP).map(([key, val]) => (
-                    <option key={key} value={key}>{val.name}</option>
+                  {(portals && portals.length > 0
+                    ? portals
+                    : Object.keys(PORTAL_MAP).map(k => ({ id: k, name: PORTAL_MAP[k as keyof typeof PORTAL_MAP]?.name || k }))
+                  ).map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
               </div>
@@ -483,7 +497,7 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
                   </tr>
                 ) : (
                   filteredQuestions.map(q => {
-                    const portalInfo = PORTAL_MAP[q.portal];
+                    const portalInfo = portals?.find(p => p.id === q.portal) || PORTAL_MAP[q.portal];
                     const categoryStyle = CATEGORY_COLORS[q.category] || 'bg-gray-100 text-gray-800';
 
                     // Anomaly styling
@@ -495,7 +509,7 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
                       <tr key={q.id} className="hover:bg-slate-50 transition-colors">
                         {/* Portal / Category */}
                         <td className="px-4 py-3.5 space-y-1.5">
-                          <span className={`inline-flex px-2 py-0.5 rounded border text-[10px] font-bold ${portalInfo?.color}`}>
+                          <span className={`inline-flex px-2 py-0.5 rounded border text-[10px] font-bold ${portalInfo?.color || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
                             {portalInfo?.name || q.portal}
                           </span>
                           <span className={`block text-[10px] font-semibold rounded px-1.5 py-0.5 max-w-max ${categoryStyle}`}>
