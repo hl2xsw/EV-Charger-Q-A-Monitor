@@ -167,11 +167,59 @@ const fallbackPortalItems = [
     anomalyReason: ""
   },
   {
-    portal: "naver_jisinin",
-    title: "전기차 지상 주차장 충전 완료 후 방치 신고",
-    content: "아파트 지상 주차장 전기차 충전 구역인데 충전이 종료되었는데도 14시간 넘게 이동하지 않고 주차해두는 차량이 있습니다. 관리실 말로는 처벌 강제성이 애매하다고 하는데, 안전신문고 앱으로 신고하면 벌금이나 과태료가 나오나요?",
-    author: "안전신고자",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=458391038",
+    portal: "daum_tip",
+    title: "공공 충전기가 주차선이랑 너무 멀어서 충전케이블이 팽팽하게 당겨지는데 위험하지 않나요?",
+    content: "주민센터 공영주차장 완속 충전기 선이 너무 짧아 당겨지면 잭이나 단자 발열, 고장의 원인이 되는지 우려됩니다. 당겨지는 힘 때문에 단선되거나 전기 누전 위험은 없는 건가요?",
+    author: "안전운전자",
+    url: "https://tip.daum.net/question/109852230",
+    category: "고장/불만",
+    keywords: ["충전케이블", "길이부족", "커넥터손상", "단선우려"],
+    anomalyScore: 28,
+    isAnomaly: false,
+    anomalyReason: ""
+  },
+  {
+    portal: "naver_cafe",
+    title: "지하 주차장 충전소 스프링클러 헤드 상향 가이드 및 화재안전 특별조사 대비안",
+    content: "요즘 지자체 소방특별점검 때문에 지하 충전 구역 주변 질식 소화포나 연기 감지기 설치가 권장되고 있습니다. 아파트 입대위에서 소방 법안 소화 의무 설치 기준을 만족하는지 논의 중인데 관련 팁이 있을까요?",
+    author: "카페입대위대표",
+    url: "https://cafe.naver.com/electriccar/90382",
+    category: "안전/사고",
+    keywords: ["지하주차장", "전기차화재", "질식소화포", "소방의무"],
+    anomalyScore: 85,
+    isAnomaly: true,
+    anomalyReason: "아파트 지하주차장 소방 대응 및 화재 안전 기준 강화 흐름에 따른 긴장 증대"
+  },
+  {
+    portal: "daum_cafe",
+    title: "1톤 전기 트럭 단독주택 완속 충전기 7kW 자가 설치 견적 및 시공기 공유",
+    content: "시골 주택 마당 구석에 비공용 홈패드 7kW 완속 충전기 시공 완료했습니다. 한전에 납부한 불입금과 한전 계량기 신설, 전선 두께 등 설치 상세 견적 비용입니다. 실물 영수증도 공유해 드립니다.",
+    author: "시골트럭맨",
+    url: "https://cafe.daum.net/ev-truck/3982",
+    category: "설치 문의",
+    keywords: ["단독주택충전", "7kW완속", "자가설치", "한전불입금"],
+    anomalyScore: 12,
+    isAnomaly: false,
+    anomalyReason: ""
+  },
+  {
+    portal: "dcinside",
+    title: "야 완속 충전요금 요새 단가 제일 싼 카드가 뭐냐? 한전 연동카드 비교함",
+    content: "환경부 카드랑 신한 EV 신용카드 쓰고 있는데 밤 11시 이후 경부하 시간대에 요금 제일 저렴한 한전 제휴 충전 카드가 뭔지 아는 오너 있으면 피드백 공유 및 요금표 추천 정리 부탁한다.",
+    author: "전기차뉴비",
+    url: "https://gall.dcinside.com/board/view/?id=ev&no=88755",
+    category: "요금/효율",
+    keywords: ["충전요금", "제휴카드", "경부하요금", "알뜰충전"],
+    anomalyScore: 15,
+    isAnomaly: false,
+    anomalyReason: ""
+  },
+  {
+    portal: "fmkorea",
+    title: "아파트 전기차 충전 완료 후 15시간 넘게 제자리 방치 빌런 과태료 신고 접수함",
+    content: "지상 충전 구역인데 충전기 종료 문자 보낸 지 한참 지났음에도 플러그 그대로 꽂아두고 이틀 동안 차량 이동을 안 하네요. 요즘 주차 매너도 엉망이라 안전신문고 앱으로 과태료 방해 신고 넣었습니다.",
+    author: "FM충전러",
+    url: "https://m.fmkorea.com/best/6792348",
     category: "고장/불만",
     keywords: ["충전방해", "주차방치", "안전신문고", "과태료"],
     anomalyScore: 45,
@@ -179,74 +227,26 @@ const fallbackPortalItems = [
     anomalyReason: ""
   },
   {
-    portal: "naver_jisinin",
-    title: "아파트 지하주차장 전기차 화재 대책 소방 시설 의무화",
-    content: "최근 전기차 화재 소식으로 입주자대표회의에서 지하에 충전기 질식소화포를 비치하고 스프링클러 헤드 상향 가이드를 새로 제안했습니다. 아파트 단지 소방 법안 소화 의무 설치 기준이 통과된 게 있는지 궁금합니다.",
-    author: "입대위대표",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=6&dirId=60601&docId=475850931",
+    portal: "inven",
+    title: "실외 완속 충전기 케이블 피복 찢어져서 내부 주황색 구리선 보이는데 사용해도 됨?",
+    content: "야외 주차장 공용 충전기 케이블선이 보도블록에 긁혀서 내부 주황색 속 피복에 상처가 크게 났습니다. 오늘 밤에 비 온다고 하는데 물 닿아서 감전되거나 차량 누전 에러 생길까 봐 꽂기 무서워요.",
+    author: "안전제일인벤",
+    url: "https://www.inven.co.kr/board/ev/5391/1042",
     category: "안전/사고",
-    keywords: ["지하주차장", "전기차화재", "질식소화포", "소방의무"],
-    anomalyScore: 85,
-    isAnomaly: true,
-    anomalyReason: "아파트 지하주차장 완속/급속소 소방 대응 및 스프링클러 규정 집중 우려 유발"
-  },
-  {
-    portal: "naver_jisinin",
-    title: "비 오는 날 실외 개방형 충전기 충전 감전 위험",
-    content: "야외 주차장에서 비를 맞으며 전기차 급속 충전을 해야 되는데, 커넥터 커버를 열었을 때 빗물이 안으로 들어가면 쇼트나 감전 위험이 있나요? 차단기 센서가 잘 작동되는지 너무 안전성에 걱정이 앞섭니다.",
-    author: "빗길안전",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=451034928",
-    category: "안전/사고",
-    keywords: ["우천시충전", "감전위험", "급속충전", "안전차단기"],
+    keywords: ["케이블피복", "구리선노출", "감전위험", "누전사고"],
     anomalyScore: 92,
     isAnomaly: true,
-    anomalyReason: "빗물 인입에 의한 감전 우려 및 습기 가득한 실외 충전건 조작 상시 위협"
+    anomalyReason: "비오는 날 실외 개방 구리 케이블 감전 노출 및 안전사고 위험 초비상 감지"
   },
   {
-    portal: "naver_jisinin",
-    title: "전기차 이동형 충전기 콘센트 사용 및 요금 부과 방식",
-    content: "공동주택 220V 벽부형 일반 콘센트에 파워큐브나 이동형 단말기를 등록해서 완속 충전하려고 합니다. 비공용으로 별도 등록하면 누진세 없이 공용 한전 전기로 청구되는 원리인가요? 건물 입주자 동의 비율이 어떤지 알고 싶군요.",
-    author: "이동형충전",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=442938102",
-    category: "이용 방법",
-    keywords: ["이동형충전기", "파워큐브", "과금형콘센트", "통합과금"],
-    anomalyScore: 12,
-    isAnomaly: false,
-    anomalyReason: ""
-  },
-  {
-    portal: "naver_jisinin",
-    title: "아파트 전기차 충전시설 의무 설치 비율 개정 법안 기한",
-    content: "신축 아파트뿐만 아니라 구축 아파트도 전기차 충전 구역을 의무적으로 설치해야 한다고 수치 법안이 통과된 걸로 아는데 정확히 총 주차 대수 대비 몇 퍼센트를 언제까지 설치 완료해야 벌금이 안 나오는지 기한이 궁금합니다.",
-    author: "관리소장",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=466184291",
-    category: "설치 문의",
-    keywords: ["의무설치비율", "친환경자동차법", "구축아파트익수", "벌금기한"],
-    anomalyScore: 19,
-    isAnomaly: false,
-    anomalyReason: ""
-  },
-  {
-    portal: "naver_jisinin",
-    title: "공용 전기차 충전 요금 가장 저렴한 카드 추천",
-    content: "환경부 카드나 충전 사업자별 카드로 충전할 때 할인 혜택이 가장 큰 신용 체크 카드가 무엇이 있을까요? 신한 EV 카드나 삼성 iD EV 카드 실사용 전기차 오너분들의 실질 피드백 공유 간곡히 구합니다.",
-    author: "알뜰충전러",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=461012830",
-    category: "요금/효율",
-    keywords: ["충전할인카드", "신한EV카드", "환경부멤버십", "가성비피크"],
-    anomalyScore: 15,
-    isAnomaly: false,
-    anomalyReason: ""
-  },
-  {
-    portal: "naver_jisinin",
-    title: "가정용 태양광 발전기 연계 전기차 완속 충전기 설치",
-    content: "단독 가구 주택 옥상에 3kW 태양광 패널을 운용 중인데 남는 잉여 전력을 전기차 개인 완속 충전기로 직접 인입하여 사용이 가능한지, 시스템 연계에 추가되는 충전 제어 장치 등의 추가 시공비 견적 궁금합니다.",
-    author: "친환경자가",
-    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=454210291",
-    category: "설치 문의",
-    keywords: ["태양광발전", "자가충전기", "잉여전력", "계통연계형"],
-    anomalyScore: 11,
+    portal: "bobae_dream",
+    title: "지하주차장 충전구역 일반 차량 무단 주차 방해 차주 과태료 부과 후기 올립니다.",
+    content: "전기차 전용 구역인데 경유 화물 탑차가 선 완전히 가로막고 무단 주차해놨길래 사진 세 장 확보해서 스마트국민제보로 신고 넣었고 벌금 10만원 과태료 통지 완료 확인했습니다. 주차 매너들 좀 배웁시다.",
+    author: "보배오너대표",
+    url: "https://www.bobaedream.co.kr/view?code=freeb&No=202619",
+    category: "고장/불만",
+    keywords: ["불법주차", "충전방해", "과태료벌금", "주차질서"],
+    anomalyScore: 48,
     isAnomaly: false,
     anomalyReason: ""
   }
@@ -1296,14 +1296,14 @@ async function startServer() {
     } catch (e) {
       console.error("Failed to load Vite dev server middleware, falling back to static serving:", e);
       // Fallback
-      const distPath = path.join(process.cwd(), "dist");
+      const distPath = path.join(process.cwd(), "docs");
       app.use(express.static(distPath));
       app.get("*", (req, res) => {
         res.sendFile(path.join(distPath, "index.html"));
       });
     }
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    const distPath = path.join(process.cwd(), "docs");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
