@@ -33,14 +33,14 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-2",
-    portal: "bobae_dream",
-    title: "아파트 주차장 충전 완료됐는데 차 안 빼는 차주 참교육",
-    content: "완충된 지 벌써 15시간 넘었는데 차지 제자리에 그대로 꽂아두고 방치 중이네요. 경고 문자 보냈는데도 씹어서 아파트 차량 방해 벌금 신고 진행하려 합니다. 요즘 전기차 몰상식한 사람들 왜 이리 많은가요?",
-    author: "마력상승1",
-    url: "https://www.bobaedream.co.kr/view?code=freeb&No=202619",
+    portal: "naver_jisinin",
+    title: "아파트 전기차 충전기 완속 충전기 고장 및 충전 안될 때 대처법",
+    content: "아파트 주차장 완속 충전기 액정이 꺼져 있고 카드를 태그해도 인식이 전혀 안 되는데, 이거 관리실에 말해야 하나요 아니면 충전기 업체에 직접 전화해서 신고해야 하나요? 입주민용 충전 에러 신속하게 해결하는 방법 알려주세요.",
+    author: "오너992",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=463282210",
     scrapedAt: new Date(Date.now() - 3600000 * 4.2).toISOString(),
     category: "고장/불만",
-    keywords: ["충전 방해", "주차 매너", "충전 완료 방치", "벌금 신고"],
+    keywords: ["충전기 고장", "고장 신고", "완속 충전기", "작동 에러"],
     anomalyScore: 45,
     isAnomaly: false,
     promoStatus: "none",
@@ -48,28 +48,28 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-3",
-    portal: "dcinside",
-    title: "전기차 급속 충전하는데 80% 근처에서 속도 왜 갑자기 똥망하냐?",
-    content: "원래 100kW 넘게 찍히다가 80퍼 가까이 차니까 속도가 20kW 이하로 급격하게 떨어지는데 이거 충전 기계 고장인가요 아니면 내 배터리가 하자 있는 건가요? 충전소 사장님 물어보고 싶은데 연락 안 됨.",
-    author: "배터리빌런",
-    url: "https://gall.dcinside.com/board/view/?id=ev&no=88721",
+    portal: "naver_jisinin",
+    title: "전기차 급속 충전하는데 80% 부근에서 속도가 왜 이렇게 느려지나요?",
+    content: "전기차 급속 충전소에서 충전 중인데 80% 근처가 되니까 충전 속도가 20kW 이하로 갑자기 뚝 떨어지네요. 원래 초반에는 100kW 넘게 찍혔는데 이거 충전 기계 에러인가요 아니면 배터리 보호 장치인가요?",
+    author: "배터리궁금",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=11&dirId=1115&docId=464455120",
     scrapedAt: new Date(Date.now() - 3600000 * 5.8).toISOString(),
     category: "이용 방법",
     keywords: ["급속 충전", "충전 속도 저하", "배터리 보호", "고장 의심"],
     anomalyScore: 25,
     isAnomaly: false,
-    aiResponse: "안녕하세요! 질문하신 충전 속도 저하 현상은 고장이 아니라 전기차 탑재 배터리(BMS)의 안전 설계 때문입니다. 리튬이온 배터리는 80%를 넘으면 과열과 성능 과부하를 예방하기 위해 충전 속도를 급격히 제어하는 단계(CC-CV 전환)를 거치게 됩니다. 따라서 급속 충전 시 80% 근처까지만 이용하시는 것이 시간과 요금을 모두 절약하는 효율적인 이용 팁입니다.",
+    aiResponse: "안녕하세요! 질문하신 충전 속도 저하 현상은 고장이 아니라 전기차 탑재 배터리(BMS)의 안전 설계 때문입니다. 리튬이온 배터리는 80%를 넘으면 과열 and 성능 과부하를 예방하기 위해 충전 속도를 급격히 제어하는 단계(CC-CV 전환)를 거치게 됩니다. 따라서 급속 충전 시 80% 근처까지만 이용하시는 것이 시간과 요금을 모두 절약하는 효율적인 이용 팁입니다.",
     aiTone: "friendly",
     promoStatus: "draft",
     views: 290
   },
   {
     id: "q-4",
-    portal: "naver_cafe",
-    title: "지하 주차장 충전기 화재 예방 패드나 소화기 의무 설치 대상인가요?",
-    content: "최근에 전기차 화재 사고 뉴스 보고 너무 무서워졌습니다. 저희 아파트 입주민 단톡방에서도 난리가 났는데, 지하주차장 충전기에 질식소화포나 소화 설비를 필수로 달아야 하는지 법제화가 이미 끝났는지 궁금해요. 화재 예방 특허 있는 충전기 회사 제품으로 변경 요청을 해야 하나 걱정입니다.",
-    author: "EV안전제일",
-    url: "https://cafe.naver.com/electriccar/90382",
+    portal: "naver_jisinin",
+    title: "지하 주차장 전기차 충전기 화재 예방 패드나 질식소화포 설치 규정",
+    content: "전기차 지하주차장 충전 화재 예방을 위해 질식소화포나 소방 전용 안전 설비를 필수로 아파트에 설치해야 하는 규정이 신설되었는지 궁금합니다. 입주민들이 소방 안전 예방 특허가 탑재된 충전기 업체 제품으로 전면 교체를 원하고 있어요.",
+    author: "소방안전관",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=462215456",
     scrapedAt: new Date(Date.now() - 3600000 * 8.0).toISOString(),
     category: "안전/사고",
     keywords: ["화재 예방", "지하주차장", "화재 사고", "소화기 의무"],
@@ -81,11 +81,11 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-5",
-    portal: "daum_tip",
-    title: "공공기관 전기차 충전기 고장 나면 어디 고장신고 하나요?",
-    content: "근처 주민센터 공영주차장 완속 충전기 액정이 꺼져 있고 카드를 태그해도 인식이 전혀 안 되더라고요. 주민센터 직원한테 물어보니 자기 관할 아니라고 하는데 신속하게 해결하는 곳이 어디인가요?",
-    author: "민원왕",
-    url: "https://tip.daum.net/question/109827",
+    portal: "naver_jisinin",
+    title: "공공기관 주차장 전기차 충전기 인식이 잘 안될 때 고장 신고 처리는?",
+    content: "근처 주민센터 주차장에 설치된 공영 완속 충전기 터치 액정이 아예 안 켜져 있고 카드 인증도 오류가 뜨는데, 이럴 땐 어디에 민원을 넣고 신고를 접수해야 처리가 가장 빠른가요?",
+    author: "주민대표",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=5&dirId=504&docId=459385512",
     scrapedAt: new Date(Date.now() - 3600000 * 12.3).toISOString(),
     category: "고장/불만",
     keywords: ["충전기 고장", "고장 신고", "공영주차장", "작동 에러"],
@@ -96,11 +96,11 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-6",
-    portal: "fmkorea",
-    title: "야간 아파트 충전소 요금이 주간보다 확실히 싼가요? 전기세 한전 요금표 정리된 거 있냐?",
-    content: "전기차 뽑은 지 일주일 차 뉴비인데 밤 11시 이후 경부하 시간대에 충전하면 정말 누진세 안 붙고 싸게 먹히는 건지요? 아파트 공용 요금 고지서 보니까 봄철 가을철 여름철 요금이 다 다르고 복잡해서 이해가 안 가네요.",
-    author: "충전비절약맨",
-    url: "https://m.fmkorea.com/best/6792348",
+    portal: "naver_jisinin",
+    title: "한전 전기차 충전 요금 계절별 경부하 시간대 단가 차이 질문",
+    content: "전기차 충전 요금 고지서를 보니까 계절별로 단가가 다 다르고 경부하 시간대가 밤 11시부터 적용된다는데 확실히 야간 완속 충전이 누진세가 안 붙고 엄청 저렴한지 한전 요금표 구조 질문드립니다.",
+    author: "요금절약러",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=11&dirId=1115&docId=458320491",
     scrapedAt: new Date(Date.now() - 3600000 * 18.5).toISOString(),
     category: "요금/효율",
     keywords: ["경부하 요금", "전기료 절감", "야간 충전", "계절별 전기요금"],
@@ -111,11 +111,11 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-7",
-    portal: "inven",
-    title: "전기차 충전케이블 피복 벗겨져 구리선 보이는데 꽂아도 됨?",
-    content: "회사 야외 주차장 구석에 있는 충전기 케이블 선이 보도블럭에 여러 번 쓸려서 그런지 내부 주황색 피복에 상처나서 구리선 같은 금속선이 좀 보이네요. 오늘 비가 부슬부슬 내리는데 충전 켜도 안전사고 문제없을까요?",
-    author: "게임하다왔음",
-    url: "https://www.inven.co.kr/board/ev/5391/1042",
+    portal: "naver_jisinin",
+    title: "비오는 날 전기차 야외 충전소 케이블 피복 벗겨짐 위험할까요?",
+    content: "회사 실외 주차장에 있는 전기차 충전기 선이 까져서 내부 구리선이 보이는데, 오늘 비도 많이 오고 슬쩍 손대기 무서워서 충전 카드를 태그해도 안전에 지장이 없는지 심각한 감전 위험이나 누전 사고 우려가 되는지 급히 질문합니다.",
+    author: "안전제일EV",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=5&dirId=504&docId=461029481",
     scrapedAt: new Date(Date.now() - 3600000 * 24).toISOString(),
     category: "안전/사고",
     keywords: ["피복 상처", "감전 위험", "누전 사고", "케이블 훼손"],
@@ -127,11 +127,11 @@ let scrapedQuestions: ScrapedQuestion[] = [
   },
   {
     id: "q-8",
-    portal: "daum_cafe",
-    title: "전기 트럭 탑차 산 다음에 완속 충전기 전용 단독주택 설치 견적 조언",
-    content: "시골 주택 마당 구석에 개인용 홈패드 7kW 충전기 설치하려면 한전에 내야 하는 불입금이랑 계량기 별도로 파는 견적 비용이 대략 얼마 정도 드는지 선배님들의 자택 설치 경험담 좀 부탁드립니다.",
-    author: "익명트럭맨",
-    url: "https://cafe.daum.net/ev-truck/3982",
+    portal: "naver_jisinin",
+    title: "단독주택 개인용 7kW 완속 충전기 자택 설치 비용 문의",
+    content: "단독주택 개인 차고에 완속 7kW 전용 홈패드 충전기를 자비로 설치하려고 하는데, 한전에 내야 하는 불입금이랑 선로 포설 공사비 등을 합친 대략적인 견적과 추천 업체를 알려주시면 감사하겠습니다.",
+    author: "개인충전",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=811&docId=462940291",
     scrapedAt: new Date(Date.now() - 3600000 * 30.1).toISOString(),
     category: "설치 문의",
     keywords: ["단독주택 충전기", "한전 불입금", "7kW 완속", "개인용 홈패드"],
@@ -266,36 +266,31 @@ let securityLogs: SecurityLog[] = [
     timestamp: new Date(Date.now() - 3600000 * 0.2).toISOString(),
     user: "hl2xsw@gmail.com",
     role: "admin",
-    action: "시스템 로그인 및 활동 시작",
-    details: "관리자 ID로 웹 대시보드 브라우저 접속 완료",
+    action: "시스템 로그인 및 감사 시작",
+    details: "관리자 ID로 웹 대시보드 브라우저 감사 감사 일지 분석 작동 완료",
     ip: "192.168.1.10"
   },
   {
     id: "log-2",
     timestamp: new Date(Date.now() - 3600000 * 1.5).toISOString(),
-    user: "hl2xsw@gmail.com",
-    role: "admin",
-    action: "실시간 스크래핑 스케줄 수정",
-    details: "수집 검색어 설정 업데이트 및 수집 주기 변경 (30분 -> 15분)",
-    ip: "192.168.1.10"
+    user: "system_detector",
+    role: "manager",
+    action: "실시간 이상 징후 자동 알림 생성",
+    details: "[실시간 포털 탐지] 아파트 전기차 충전기 소방안전 기준 불안감 질문 여과",
+    ip: "192.168.1.10",
+    portal: "naver_jisinin",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=81104&docId=462215456"
   },
   {
     id: "log-3",
     timestamp: new Date(Date.now() - 3600000 * 5.0).toISOString(),
     user: "hl2xsw@gmail.com",
     role: "admin",
-    action: "권한 변경 성공",
-    details: "데이터 보안에 따른 관리 수준 및 접근 권한 설정",
-    ip: "192.168.1.10"
-  },
-  {
-    id: "log-4",
-    timestamp: new Date(Date.now() - 3600000 * 12.0).toISOString(),
-    user: "managerKey",
-    role: "manager",
-    action: "상세 보고서 생성 완료",
-    details: "전기차 Q&A 및 이상징후 보고 데이터 엑셀/PDF 포맷 다운로드 트리거",
-    ip: "192.168.2.45"
+    action: "AI 원천 질문 분석&자동 분류 실행",
+    details: "Gemini API를 활용하여 완속 충전기 신규 설치 규정 질문 분석 완료",
+    ip: "192.168.1.10",
+    portal: "naver_jisinin",
+    url: "https://kin.naver.com/qna/detail.naver?d1id=8&dirId=811&docId=469382103"
   }
 ];
 
@@ -902,25 +897,44 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
   const randomKeyword = searchKws[Math.floor(Math.random() * searchKws.length)];
   const newlyScraped: ScrapedQuestion[] = [];
 
-  // LAYER 1: Naver Live HTML Scraping via Cheerio (100% REAL Portal Inquiries sorted by date, limited to 1 week period)
+  // LAYER 1: Naver Live HTML Scraping via Cheerio (100% REAL Portal Inquiries sorted by date, limited to 1 week period with fallback to general latest if 0 results)
   try {
-    console.log(`[Realtime Scraper] Scraping real Naver KIN Search Q&A for keyword: "${randomKeyword}" with 1-week period`);
-    // 'period=1w' parameter restricts search to the past 1 week. 'sort=date' sorts by most recent.
-    const searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(randomKeyword)}&period=1w&sort=date`;
+    console.log(`[Realtime Scraper] Scraping real Naver KIN Search Q&A for keyword: "${randomKeyword}"`);
+    let searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(randomKeyword)}&period=1w&sort=date`;
     
-    const response = await fetch(searchUrl, {
+    let response = await fetch(searchUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
       }
     });
     
+    let html = "";
     if (response.ok) {
-      const html = await response.text();
-      const $ = cheerio.load(html);
-      
-      const bxItems = $("ul.basic1 > li");
-      bxItems.each((i, el) => {
+      html = await response.text();
+    }
+    
+    let $ = cheerio.load(html || "");
+    let bxItems = $("ul.basic1 > li");
+    
+    // Fallback: If 1-week constraint is too restrictive and returns 0 items, search unrestricted to get latest authentic posts
+    if (bxItems.length === 0) {
+      console.log(`[Realtime Scraper] 0 results found with 1-week constraint. Retrying search with unrestricted period...`);
+      searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(randomKeyword)}&sort=date`;
+      response = await fetch(searchUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+          "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+        }
+      });
+      if (response.ok) {
+        html = await response.text();
+        $ = cheerio.load(html);
+        bxItems = $("ul.basic1 > li");
+      }
+    }
+    
+    bxItems.each((i, el) => {
         if (newlyScraped.length >= 4) return; // Keep batch balanced
 
         // Find title anchor
@@ -1006,7 +1020,6 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
           views: Math.floor(Math.random() * 45) + 3
         });
       });
-    }
     
     if (newlyScraped.length > 0) {
       console.log(`[Realtime Scraper] Successfully scraped ${newlyScraped.length} REAL portal queries from Naver Search!`);
