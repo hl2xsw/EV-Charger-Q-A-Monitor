@@ -893,7 +893,7 @@ app.delete("/api/keywords/:word", (req, res) => {
   res.status(404).json({ error: "Keyword not found" });
 });
 
-// Online Real-time Crawler Engine: 3-Layer Hybrid Scraper (Naver Site Live Scraping -> Gemini Google Search Grounding -> Premium Realistic Seed Logs)
+// Online Real-time Crawler Engine: Dynamic Live Scraper (strictly 100% real Naver KIN posts from last 1 week, zero simulation/mock fallback)
 async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
   const searchKws = schedulerConfig.targetKws.length > 0 
     ? schedulerConfig.targetKws 
@@ -902,10 +902,11 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
   const randomKeyword = searchKws[Math.floor(Math.random() * searchKws.length)];
   const newlyScraped: ScrapedQuestion[] = [];
 
-  // LAYER 1: Naver Live HTML Scraping via Cheerio (100% REAL Portal Inquiries sorted by date)
+  // LAYER 1: Naver Live HTML Scraping via Cheerio (100% REAL Portal Inquiries sorted by date, limited to 1 week period)
   try {
-    console.log(`[Realtime Scraper] [LAYER 1] Scraping real Naver KIN Search Q&A for keyword: "${randomKeyword}"`);
-    const searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(randomKeyword)}&sort=date`;
+    console.log(`[Realtime Scraper] Scraping real Naver KIN Search Q&A for keyword: "${randomKeyword}" with 1-week period`);
+    // 'period=1w' parameter restricts search to the past 1 week. 'sort=date' sorts by most recent.
+    const searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(randomKeyword)}&period=1w&sort=date`;
     
     const response = await fetch(searchUrl, {
       headers: {
@@ -929,6 +930,11 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
         let linkUrl = aTag.attr("href") || "";
         if (linkUrl.startsWith("/")) {
           linkUrl = "https://kin.naver.com" + linkUrl;
+        }
+
+        // Strictly verify that it is a real Naver KIN post link (to avoid advertisements, powerlinks, or external spam redirects)
+        if (!linkUrl.includes("/qna/detail") && !linkUrl.includes("qna/detail.naver")) {
+          return;
         }
 
         const rawTitle = aTag.text().trim().replace(/^[\sQ\.\?\!\:\,\-]+/, "");
@@ -1003,51 +1009,16 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
     }
     
     if (newlyScraped.length > 0) {
-      console.log(`[Realtime Scraper] [LAYER 1] Successfully scraped ${newlyScraped.length} REAL portal queries from Naver Search!`);
+      console.log(`[Realtime Scraper] Successfully scraped ${newlyScraped.length} REAL portal queries from Naver Search!`);
+    } else {
+      console.log(`[Realtime Scraper] No new posts found for keyword "${randomKeyword}" in the last 1 week.`);
     }
   } catch (error) {
-    console.error("[Realtime Scraper] [LAYER 1] Naver Live Scraping failed, shifting directly to offline real pool fallback:", error);
+    console.error("[Realtime Scraper] Naver Live Scraping failed:", error);
   }
 
-  // LAYER 3: Offline Seed Pool (100% Genuine raw Korean portal logs collected from real forums)
-  if (newlyScraped.length === 0) {
-    console.log("[Realtime Scraper] [LAYER 3] Using local High-Fidelity realistic portal pool for scraping simulator.");
-    const activePortalIds = activePortals.map(p => p.id);
-    let shuffled = [...fallbackPortalItems].filter(item => activePortalIds.includes(item.portal));
-    
-    if (shuffled.length === 0) {
-      // Re-map portal of logs to fit active list so that we never fail to supply simulated values
-      shuffled = fallbackPortalItems.map(item => ({
-        ...item,
-        portal: activePortalIds[0] || "naver_jisinin"
-      }));
-    }
-
-    shuffled.sort(() => 0.5 - Math.random());
-    const sampleCount = Math.floor(Math.random() * 2) + 2; // Grab 2 or 3 items
-    const selectedFallback = shuffled.slice(0, sampleCount);
-
-    for (const item of selectedFallback) {
-      const newQ: ScrapedQuestion = {
-        id: "q-live-sim-" + Date.now() + "_" + Math.floor(Math.random() * 10000),
-        portal: item.portal as PortalType,
-        title: item.title,
-        content: item.content,
-        author: item.author,
-        url: item.url,
-        scrapedAt: new Date().toISOString(),
-        category: item.category as any,
-        keywords: [...item.keywords, "실시간시뮬", "리얼로그"],
-        anomalyScore: item.anomalyScore,
-        isAnomaly: item.isAnomaly,
-        anomalyReason: item.anomalyReason,
-        promoStatus: "none",
-        views: Math.floor(Math.random() * 60) + 5
-      };
-
-      newlyScraped.push(newQ);
-    }
-  }
+  // LAYER 3: Removed completely to prevent any mock, simulated, or fallback question generation.
+  // We return exactly 0 results if nothing was scraped from the live portal.
 
   // Prepend scraped questions to global in-memory DB
   if (newlyScraped.length > 0) {
