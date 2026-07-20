@@ -7,6 +7,7 @@ interface ScraperTabProps {
   questions: ScrapedQuestion[];
   scheduler: SchedulerConfig;
   userRole: 'admin' | 'manager' | 'viewer';
+  isLoading?: boolean;
   onAddQuestion: (q: Partial<ScrapedQuestion>) => Promise<any>;
   onDeleteQuestion: (id: string) => Promise<any>;
   onUpdateScheduler: (cfg: Partial<SchedulerConfig>) => Promise<any>;
@@ -20,6 +21,7 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
   questions,
   scheduler,
   userRole,
+  isLoading = false,
   onAddQuestion,
   onDeleteQuestion,
   onUpdateScheduler,
@@ -88,7 +90,7 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
         title: manualTitle,
         content: manualContent,
         author: manualAuthor || '운영팀수동',
-        url: manualUrl || 'http://kin.naver.com',
+        url: manualUrl || `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(manualTitle)}&sort=date`,
         category: manualCategory,
         keywords: kws
       });
@@ -260,10 +262,11 @@ export const ScraperTab: React.FC<ScraperTabProps> = ({
           {/* Trigger Now Button */}
           <button
             onClick={onTriggerScrapeNow}
-            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+            disabled={userRole === 'viewer' || isLoading}
+            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm disabled:cursor-wait"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
-            지금 즉시 매체 스크래핑
+            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            {isLoading ? '매체 실시간 수집 및 여과 중...' : '지금 즉시 매체 스크래핑'}
           </button>
         </div>
 
