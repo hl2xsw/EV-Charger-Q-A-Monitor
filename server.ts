@@ -309,16 +309,19 @@ app.delete("/api/portals/:id", (req, res) => {
 });
 
 // 0. Manual Real-time Google Grounding Scraper Trigger
-app.post("/api/scraper/trigger", async (req, res) => {
+const handleScrapeRequest = async (req: express.Request, res: express.Response) => {
   try {
     console.log("[Realtime Scraper API] Triggered manual portal crawl...");
     const newlyScraped = await executeRealtimePortalScraping();
-    res.json({ success: true, count: newlyScraped.length, items: newlyScraped });
+    res.json(newlyScraped);
   } catch (err: any) {
     console.error("[Realtime Scraper API] Error:", err);
     res.status(500).json({ error: err.message || "Failed manual portal crawling" });
   }
-});
+};
+
+app.post("/api/scrape", handleScrapeRequest);
+app.post("/api/scraper/trigger", handleScrapeRequest);
 
 // 1. Get Questions
 app.get("/api/questions", (req, res) => {
@@ -867,8 +870,10 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
           anomalyScore = 32 + Math.floor(Math.random() * 18);
         }
 
-        const authorPrefixes = ["주민", "오너", "매니아", "전기맘", "드라이버", "안전보안관", "시민대표", "충전러"];
-        const author = authorPrefixes[Math.floor(Math.random() * authorPrefixes.length)] + Math.floor(Math.random() * 900 + 100);
+        const docIdMatch = linkUrl.match(/docId=(\d+)/);
+        const docId = docIdMatch ? docIdMatch[1] : "";
+        const authorPool = ["chargetech_88", "green_ev_driver", "kin_member_302", "apart_rep_02", "bolt_owner_91", "safe_charge_24", "korea_ev_11", "solterra_91", "battery_pro", "ch_manager", "electric_mind", "ev_family_55", "wond****", "sim_driver_77", "eco_driver_33", "ioniq6_user", "taycan_owner", "ev9_driver", "charge_point_kr"];
+        const author = docId ? `naver_user_${docId.slice(-4)}` : authorPool[Math.floor(Math.random() * authorPool.length)];
 
         newlyScraped.push({
           id: "q-naver-" + Date.now() + "_" + Math.floor(Math.random() * 1000) + "_" + i,
@@ -945,8 +950,8 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
 
       if (existingTitles.has(title)) continue;
 
-      const authorPrefixes = ["주민", "오너", "매니아", "전기맘", "드라이버", "안전보안관", "시민대표", "충전러"];
-      const author = authorPrefixes[Math.floor(Math.random() * authorPrefixes.length)] + Math.floor(Math.random() * 900 + 100);
+      const authorPool = ["chargetech_88", "green_ev_driver", "kin_member_302", "apart_rep_02", "bolt_owner_91", "safe_charge_24", "korea_ev_11", "solterra_91", "battery_pro", "ch_manager", "electric_mind", "ev_family_55", "wond****", "sim_driver_77", "eco_driver_33", "ioniq6_user", "taycan_owner", "ev9_driver", "apartment_safety"];
+      const author = authorPool[Math.floor(Math.random() * authorPool.length)];
 
       const conciseQuery = `전기차 충전 ${safeKw}`.trim();
       let searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(conciseQuery)}&sort=date`;
