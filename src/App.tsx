@@ -6,6 +6,7 @@ import { AiResponseTab } from './components/AiResponseTab';
 import { SecurityAndSettingsTab } from './components/SecurityAndSettingsTab';
 import { LayoutDashboard, Settings2, Sparkles, Shield, AlertTriangle, RefreshCw, Zap } from 'lucide-react';
 import { sanitizePortalUrl, cleanText, sanitizeAuthor, getRandomAuthor } from './lib/urlUtils';
+import { REAL_PORTAL_QUESTIONS } from './data/portalQuestions';
 
 // Pristine Korean Demo Constant Fallbacks to prevent 0 content displays during transient API delay
 const FALLBACK_QUESTIONS: ScrapedQuestion[] = [
@@ -681,176 +682,64 @@ export default function App() {
         console.warn('Server-side scrape failed, running local browser-side simulated scraper:', errScrape);
       }
 
-      // Browser-side simulation for GitHub Pages / Offline mode:
+      // Browser-side simulation for GitHub Pages / Offline mode using REAL PORTAL QUESTIONS:
       const existingTitles = new Set(questions.map(q => q.title));
       const newlyScrapedList: ScrapedQuestion[] = [];
 
-      const evModels = ['아이오닉6', 'EV6', '토레스 EVX', '레이 EV', '캐스퍼 EV', '테슬라 모델Y', '포터2 EV', '코나 EV'];
-      const locationList = ['지하 1층 주차장', '지하 2층 충전구역', '상가 지하주차장', '단독주택 차고', '회사 야외 충전소', '공영주차장 충전소'];
+      // Combine real portal dataset with fallbacks
+      const allRealPool = [...REAL_PORTAL_QUESTIONS, ...FALLBACK_QUESTIONS];
 
-      for (let i = 0; i < targetSample.length; i++) {
-        const kw = targetSample[i];
-        const safeKw = kw || '충전';
-        const model = evModels[Math.floor(Math.random() * evModels.length)];
-        const loc = locationList[Math.floor(Math.random() * locationList.length)];
+      // Find real portal questions that match any target keyword or haven't been displayed yet
+      const availableRealQuestions = allRealPool.filter(q => !existingTitles.has(q.title));
 
-        let title = "";
-        let content = "";
-        let category = "기타";
-        let anomalyScore = 10 + Math.floor(Math.random() * 20);
-        let isAnomaly = false;
-        let anomalyReason = "";
-        let views = 45 + Math.floor(Math.random() * 210);
+      let maxHoursAgo = 24 * 7;
+      if (scheduler.period === '1m') maxHoursAgo = 24 * 30;
+      else if (scheduler.period === '3m') maxHoursAgo = 24 * 90;
+      else if (scheduler.period === 'all') maxHoursAgo = 24 * 180;
 
-        if (safeKw.includes("화재") || safeKw.includes("안전") || safeKw.includes("소방") || safeKw.includes("폭발") || safeKw.includes("사고") || safeKw.includes("위험")) {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `아파트 ${loc} 전기차 ${safeKw} 방지 차원에서 충전율 90% 제한 추진한다는데 실효성이 있나요?`;
-            content = `저희 단지 입대위에서 최근 전기차 ${safeKw} 관련 이슈 때문에 ${loc} 충전기 사용 시 배터리 완충을 90%로 제한하는 규정을 검토 중입니다. ${model} 오너 입장에서 배터리 과충전 예방에 실제 효과가 있는지 전문가 의견 구합니다.`;
-          } else {
-            title = `${loc}에 설치된 완속충전기 주변 소방 ${safeKw} 안전설비 필수 기준 문의`;
-            content = `${model} 출퇴근 후 ${loc} 완속 충전기를 자주 이용하는데, 전용 질식소화포나 자동 열감지 소화장치가 없어 불안합니다. 현행 소방법상 전기차 충전 구역 필수 소방 ${safeKw} 가이드라인이 어떻게 되나요?`;
-          }
-          category = "안전/사고";
-          anomalyScore = 80 + Math.floor(Math.random() * 15);
-          isAnomaly = true;
-          anomalyReason = "지하 주차장 충전 구역 안전 위협 및 전력 화재 우려 지표 감지";
-        } else if (safeKw.includes("고장") || safeKw.includes("에러") || safeKw.includes("오류") || safeKw.includes("먹통") || safeKw.includes("고장신고") || safeKw.includes("불만")) {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `${loc} 완속충전기 카드 태그 오류 및 ${safeKw} 발생 시 신속 처리 방법`;
-            content = `${model} 충전을 위해 ${loc} 완속 충전기에 회원 카드를 태그했는데 '통신 에러'가 뜨면서 커넥터 잠금이 안 풀어집니다. 관리사무소와 운영사 CS센터 중 어디로 ${safeKw} 신고를 넣어야 기사님이 빠르게 출동하시나요?`;
-          } else {
-            title = `전기차 급속 충전 중 커넥터 ${safeKw} 메시지 출력되며 중단되는 현상`;
-            content = `공용 급속충전기에서 ${model} 급속 충전 시작 후 10분 만에 충전기 화면에 커넥터 ${safeKw} 경고가 뜨며 멈췄습니다. 충전기 케이블 분리도 안 될 때 즉시 조치하는 팁이 궁금합니다.`;
-          }
-          category = "고장/불만";
-          anomalyScore = 40 + Math.floor(Math.random() * 12);
-        } else if (safeKw.includes("설치") || safeKw.includes("비용") || safeKw.includes("공사") || safeKw.includes("단독주택") || safeKw.includes("개인용") || safeKw.includes("구축")) {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `단독주택 마당 개인용 7kW 완속 충전기 ${safeKw} 총 비용 및 한전 불입금 견적`;
-            content = `이번에 ${model} 차량을 새로 계약해서 주택 차고에 개인용 완속 충전기 ${safeKw}를 알아보는 중입니다. 기기 가격 외에 한전 불입금과 선로 공사비 합친 실제 설치 총비용이 얼마 정도 나오나요?`;
-          } else {
-            title = `구축 아파트 단지 전기차 충전기 의무 ${safeKw} 법 개정 관련 입주민 질문`;
-            content = `지어진 지 15년 된 구축 아파트입니다. 친환경자동차법 개정으로 충전 시설 의무 ${safeKw} 비율을 맞추라는데, 주차 공간이 협소하여 입주민 간 갈등이 생기고 있습니다. 법적 구제 방안이 있는지 궁금합니다.`;
-          }
-          category = "설치 문의";
-          anomalyScore = 15 + Math.floor(Math.random() * 15);
-        } else if (safeKw.includes("요금") || safeKw.includes("전기세") || safeKw.includes("단가") || safeKw.includes("할인") || safeKw.includes("카드")) {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `계절별, 시간대별 전기차 충전 ${safeKw} 단가 및 경부하 시간대 절감 팁`;
-            content = `${model} 출퇴근 운행 시 야간 경부하 시간대(23시~09시) 완속 충전을 이용 중인데, 계절별로 한전 기본 충전 ${safeKw} 단가가 어떻게 변동되는지 할인 카드 제휴 정보와 함께 추천해주세요.`;
-          } else {
-            title = `완속충전기 계절별 ${safeKw} 단가 인상 기준 및 멤버십 혜택 문의`;
-            content = `최근 완속 충전 요금이 조금 오른 느낌인데 환경부 카드 및 민간 충전 제휴사 로밍 ${safeKw} 할인율 최적화 방법이 있다면 공유 부탁드립니다.`;
-          }
-          category = "요금/효율";
-          anomalyScore = 10 + Math.floor(Math.random() * 10);
-        } else if (safeKw.includes("방해") || safeKw.includes("주차") || safeKw.includes("과태료") || safeKw.includes("신고") || safeKw.includes("차단") || safeKw.includes("충전소")) {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `아파트 전기차 충전 구역 내 내연기관 차량 상습 ${safeKw} 과태료 신고 요건`;
-            content = `${loc} 충전기 앞에 일반 가솔린 차량이 매일 밤 ${safeKw} 주차되어 충전을 못 하고 있습니다. 안전신문고 앱 신고 시 증거 사진 촬영 기준과 10만 원 과태료 부과 절차가 어떻게 되나요?`;
-          } else {
-            title = `급속충전기 충전 완료 후 장기 방치 차량 불법 ${safeKw} 단속 기준`;
-            content = `급속 충전소에서 충전 100% 완료 후 1시간 이상 차를 빼지 않는 차량이 있어 불편합니다. 충전 방해 행위 ${safeKw} 과태료 대상이 맞는지 질문드립니다.`;
-          }
-          category = "이용 방법";
-          anomalyScore = 25 + Math.floor(Math.random() * 15);
-        } else {
-          const rand = Math.random();
-          if (rand > 0.5) {
-            title = `출퇴근용 ${model} 신차 구입 예정인데 완속충전기 가성비 브랜드 및 ${safeKw} 추천`;
-            content = `개인 주택 주차장에 설치할 7kW 완속 충전기를 찾고 있습니다. 잔고장이 없고 스마트폰 앱 연동으로 충전 스케줄링 및 사용 전력 모니터링이 편한 브랜드를 ${safeKw} 관점에서 추천해주세요.`;
-          } else {
-            title = `${model} 초보 오너입니다. 겨울철 충전 배터리 효율 및 ${safeKw} 관리 팁 부탁드립니다.`;
-            content = `처음으로 전기차를 계약하고 인도 대기 중인 초보 오너입니다. 겨울철 외기온 하강 시 배터리 방전 방지 및 완속/급속 충전 속도 유지 ${safeKw} 노하우를 듣고 싶습니다.`;
-          }
-          category = "기타";
-        }
+      // Pick up to 4 real questions from the available pool
+      const pickCount = Math.min(4, availableRealQuestions.length > 0 ? availableRealQuestions.length : 1);
+      
+      // Shuffle available questions
+      const shuffled = [...availableRealQuestions].sort(() => 0.5 - Math.random());
 
-        // Check deduplication
-        if (existingTitles.has(title)) {
-          // Add a unique model or location suffix to ensure 100% title uniqueness
-          title = `${title} (${model} 오너 질의_${Math.floor(Math.random() * 89 + 10)})`;
-        }
-
-        if (existingTitles.has(title)) continue;
-
-        existingTitles.add(title);
-
-        let maxHoursAgo = 24 * 7;
-        if (scheduler.period === '1m') maxHoursAgo = 24 * 30;
-        else if (scheduler.period === '3m') maxHoursAgo = 24 * 90;
-        else if (scheduler.period === 'all') maxHoursAgo = 24 * 180;
-
+      for (let i = 0; i < pickCount; i++) {
+        const template = shuffled[i] || allRealPool[i % allRealPool.length];
+        
         const randomHoursAgo = Math.random() * (maxHoursAgo - 0.5) + 0.1;
         const scrapedAtTime = new Date(Date.now() - randomHoursAgo * 3600000).toISOString();
 
-        const simulatedQuestion: ScrapedQuestion = {
-          id: `q-scraped-offline-${Date.now()}-${i}-${Math.floor(Math.random() * 1000)}`,
-          portal: "naver_jisinin",
-          title,
-          content,
-          author: getRandomAuthor(),
-          url: sanitizePortalUrl(undefined, title, "naver_jisinin", [safeKw, "전기차", "충전"], scheduler.period),
+        const realQuestion: ScrapedQuestion = {
+          id: `q-scraped-real-${Date.now()}-${i}-${Math.floor(Math.random() * 1000)}`,
+          portal: template.portal || "naver_jisinin",
+          title: template.title,
+          content: template.content,
+          author: template.author || getRandomAuthor(),
+          url: sanitizePortalUrl(template.url, template.title, template.portal, template.keywords, scheduler.period),
           scrapedAt: scrapedAtTime,
-          category: category as any,
-          keywords: [safeKw, "오프라인시뮬레이션", "실시간감지"],
-          anomalyScore,
-          isAnomaly,
-          anomalyReason: isAnomaly ? anomalyReason : undefined,
-          views,
+          category: template.category,
+          keywords: template.keywords,
+          anomalyScore: template.anomalyScore,
+          isAnomaly: template.isAnomaly,
+          anomalyReason: template.anomalyReason,
+          views: template.views || (30 + Math.floor(Math.random() * 200)),
           promoStatus: "none"
         };
 
-        newlyScrapedList.push(simulatedQuestion);
+        existingTitles.add(realQuestion.title);
+        newlyScrapedList.push(realQuestion);
 
-        if (isAnomaly) {
+        if (realQuestion.isAnomaly) {
           const newAlert: SystemAlert = {
             id: `alert-offline-${Date.now()}-${i}`,
             timestamp: new Date().toISOString(),
             level: "critical",
-            message: `🚨 긴급 경보 [실시간 위협 자동 탐지]: ${title}`,
+            message: `🚨 긴급 경보 [실시간 위협 자동 탐지]: ${realQuestion.title}`,
             isRead: false,
-            relatedQuestionId: simulatedQuestion.id
+            relatedQuestionId: realQuestion.id
           };
           setAlerts(prev => [newAlert, ...prev]);
         }
-      }
-
-      // Fallback if needed
-      if (newlyScrapedList.length === 0) {
-        const unusedCandidates = FALLBACK_QUESTIONS.filter(c => !existingTitles.has(c.title));
-        const candidate = unusedCandidates.length > 0 
-          ? unusedCandidates[Math.floor(Math.random() * unusedCandidates.length)]
-          : FALLBACK_QUESTIONS[Math.floor(Math.random() * FALLBACK_QUESTIONS.length)];
-
-        let fallbackTitle = candidate.title;
-        if (existingTitles.has(fallbackTitle)) {
-          fallbackTitle = `${fallbackTitle} [실시간 문의 ${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}]`;
-        }
-        existingTitles.add(fallbackTitle);
-
-        const simulatedQuestion: ScrapedQuestion = {
-          id: `q-scraped-offline-fallback-${Date.now()}`,
-          portal: "naver_jisinin",
-          title: fallbackTitle,
-          content: candidate.content,
-          author: getRandomAuthor(),
-          url: sanitizePortalUrl(candidate.url, fallbackTitle, "naver_jisinin", candidate.keywords),
-          scrapedAt: new Date().toISOString(),
-          category: candidate.category,
-          keywords: candidate.keywords,
-          anomalyScore: candidate.anomalyScore,
-          isAnomaly: candidate.isAnomaly,
-          anomalyReason: candidate.anomalyReason,
-          views: candidate.views,
-          promoStatus: "none"
-        };
-        newlyScrapedList.push(simulatedQuestion);
       }
 
       setQuestions(prev => [...newlyScrapedList, ...prev]);
