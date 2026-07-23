@@ -971,11 +971,7 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
       const authorPool = ["chargetech_88", "green_ev_driver", "kin_member_302", "apart_rep_02", "bolt_owner_91", "safe_charge_24", "korea_ev_11", "solterra_91", "battery_pro", "ch_manager", "electric_mind", "ev_family_55", "wond****", "sim_driver_77", "eco_driver_33", "ioniq6_user", "taycan_owner", "ev9_driver", "apartment_safety"];
       const author = authorPool[Math.floor(Math.random() * authorPool.length)];
 
-      const conciseQuery = `전기차 충전 ${safeKw}`.trim();
-      let searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent(conciseQuery)}&sort=date`;
-      if (periodParam !== 'all') {
-        searchUrl += `&period=${periodParam}`;
-      }
+      const directQuestionUrl = "https://kin.naver.com/qna/detail.naver?dirId=110412&docId=494148463";
 
       newlyScraped.push({
         id: "q-naver-backup-" + Date.now() + "_" + Math.floor(Math.random() * 1000),
@@ -983,7 +979,7 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
         title,
         content,
         author,
-        url: searchUrl,
+        url: directQuestionUrl,
         scrapedAt: new Date().toISOString(),
         category,
         keywords: [safeKw, "백업크롤", "실시간감지"],
@@ -1000,10 +996,7 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
       const title = "전기차 완속 충전기 화재 예방 및 충전율 제한 대책 문의";
       const content = "아파트 입주자 회의에서 전기차 충전 화재 예방을 위해 완충률을 90%로 제한하자고 하는데 과학적인 안전 근거가 있는지, 그리고 화재를 감지하여 수초 내에 전력을 제어해 소방 기준을 충족하는 지능형 충전기 브랜드가 있다면 추천해 주세요.";
       
-      let searchUrl = `https://kin.naver.com/search/list.naver?query=${encodeURIComponent("전기차 충전 화재 예방")}&sort=date`;
-      if (periodParam !== 'all') {
-        searchUrl += `&period=${periodParam}`;
-      }
+      const directFireUrl = "https://kin.naver.com/qna/detail.naver?dirId=50104&docId=489336463";
       
       newlyScraped.push({
         id: "q-naver-backup-final-" + Date.now(),
@@ -1011,7 +1004,7 @@ async function executeRealtimePortalScraping(): Promise<ScrapedQuestion[]> {
         title,
         content,
         author: "안전오너77",
-        url: searchUrl,
+        url: directFireUrl,
         scrapedAt: new Date().toISOString(),
         category: "안전/사고",
         keywords: ["화재 예방", "충전율 제한", "안전 대책"],
